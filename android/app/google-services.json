@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "771775359247",
+    "project_id": "romana-project",
+    "storage_bucket": "romana-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:771775359247:android:c2fbde8e471f1da542367a",
+        "android_client_info": {
+          "package_name": "com.romana.delivery"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcRj1bnqhkdsEtKMdtMOc2FI8DSq_Ee0A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
