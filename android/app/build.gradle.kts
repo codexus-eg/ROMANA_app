@@ -1,3 +1,12 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+val keystorePropertiesFile = rootProject.file("key.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+}
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -7,15 +16,16 @@ plugins {
 
 android {
     namespace = "com.romana.delivery"
-    compileSdk = 35
+    // تم تحديث الـ SDK لـ 36
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     signingConfigs {
         create("release") {
-            keyAlias = "romana"
-            keyPassword = "romana123"
-            storeFile = file("romana-key.jks")
-            storePassword = "romana123"
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            storePassword = keystoreProperties.getProperty("storePassword")
         }
     }
 
@@ -31,8 +41,9 @@ android {
 
     defaultConfig {
         applicationId = "com.romana.delivery"
-        minSdk = 23
-        targetSdk = 35
+        minSdk = flutter.minSdkVersion
+        // تم تحديث الـ Target لـ 36
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
