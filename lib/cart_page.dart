@@ -6,7 +6,7 @@ import 'invoice_page.dart';
 class CartPage extends StatefulWidget {
   final List<Map<String, dynamic>> cart;
   final Function(List<Map<String, dynamic>>) onCartUpdated;
-  CartPage({required this.cart, required this.onCartUpdated});
+  const CartPage({super.key, required this.cart, required this.onCartUpdated});
 
   @override
   State<CartPage> createState() => _CartPageState();
@@ -141,13 +141,13 @@ class _CartPageState extends State<CartPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text('سلة المشتريات 🛒',
+          title: const Text('سلة المشتريات 🛒',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: cartItems.isEmpty
-            ? Center(
+            ? const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -162,7 +162,7 @@ class _CartPageState extends State<CartPage> {
                 children: [
                   Expanded(
                     child: ListView.builder(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       itemCount: cartItems.length,
                       itemBuilder: (context, index) {
                         final item = cartItems[index];
@@ -176,9 +176,9 @@ class _CartPageState extends State<CartPage> {
                           elevation: 3,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16)),
-                          margin: EdgeInsets.only(bottom: 12),
+                          margin: const EdgeInsets.only(bottom: 12),
                           child: Padding(
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             child: Row(
                               children: [
                                 ClipRRect(
@@ -188,24 +188,26 @@ class _CartPageState extends State<CartPage> {
                                     height: 60,
                                     width: 60,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (c, e, s) => Icon(Icons.image,
-                                        size: 50, color: Colors.grey),
+                                    errorBuilder: (c, e, s) => const Icon(
+                                        Icons.image,
+                                        size: 50,
+                                        color: Colors.grey),
                                   ),
                                 ),
-                                SizedBox(width: 12),
+                                const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(getItemName(item),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold)),
                                       RichText(
                                         textDirection: TextDirection.rtl,
                                         text: TextSpan(
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.red,
                                               fontWeight: FontWeight.bold,
                                               fontSize: 14),
@@ -216,7 +218,7 @@ class _CartPageState extends State<CartPage> {
                                                 '$price ريال',
                                                 textDirection:
                                                     TextDirection.ltr,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.red,
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 14),
@@ -228,16 +230,16 @@ class _CartPageState extends State<CartPage> {
                                       RichText(
                                         textDirection: TextDirection.rtl,
                                         text: TextSpan(
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.grey, fontSize: 12),
                                           children: [
-                                            TextSpan(text: 'الإجمالي: '),
+                                            const TextSpan(text: 'الإجمالي: '),
                                             WidgetSpan(
                                               child: Text(
                                                 '${itemTotal % 1 == 0 ? itemTotal.toInt() : itemTotal.toStringAsFixed(1)} ريال',
                                                 textDirection:
                                                     TextDirection.ltr,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.grey,
                                                     fontSize: 12),
                                               ),
@@ -251,7 +253,7 @@ class _CartPageState extends State<CartPage> {
                                 Column(
                                   children: [
                                     IconButton(
-                                      icon: Icon(Icons.add_circle,
+                                      icon: const Icon(Icons.add_circle,
                                           color: Colors.green),
                                       onPressed: () {
                                         setState(() {
@@ -264,11 +266,11 @@ class _CartPageState extends State<CartPage> {
                                     ),
                                     Text(
                                       '\u200E${qty % 1 == 0 ? qty.toInt() : qty} $unit',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.remove_circle,
+                                      icon: const Icon(Icons.remove_circle,
                                           color: Colors.red),
                                       onPressed: () {
                                         setState(() {
@@ -293,34 +295,34 @@ class _CartPageState extends State<CartPage> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       color: Colors.red.shade50,
                       borderRadius:
-                          BorderRadius.vertical(top: Radius.circular(20)),
+                          const BorderRadius.vertical(top: Radius.circular(20)),
                     ),
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('الإجمالي:',
+                            const Text('الإجمالي:',
                                 style: TextStyle(
                                     fontSize: 20, fontWeight: FontWeight.bold)),
                             Text(
                               '\u200E${total % 1 == 0 ? total.toInt() : total.toStringAsFixed(1)} ريال',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 20,
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
                         // اختيار العنوان
                         Container(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -329,7 +331,7 @@ class _CartPageState extends State<CartPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 children: [
                                   Icon(Icons.location_on,
                                       color: Colors.red, size: 20),
@@ -340,14 +342,14 @@ class _CartPageState extends State<CartPage> {
                                           fontSize: 16)),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               isLoadingAddresses
-                                  ? Center(
+                                  ? const Center(
                                       child: CircularProgressIndicator(
                                           color: Colors.red))
                                   : addresses.isEmpty
                                       ? Container(
-                                          padding: EdgeInsets.all(12),
+                                          padding: const EdgeInsets.all(12),
                                           decoration: BoxDecoration(
                                             color: Colors.orange.shade50,
                                             borderRadius:
@@ -355,7 +357,7 @@ class _CartPageState extends State<CartPage> {
                                             border: Border.all(
                                                 color: Colors.orange.shade200),
                                           ),
-                                          child: Row(
+                                          child: const Row(
                                             children: [
                                               Icon(Icons.warning,
                                                   color: Colors.orange),
@@ -385,9 +387,10 @@ class _CartPageState extends State<CartPage> {
                                                 });
                                               },
                                               child: Container(
-                                                margin:
-                                                    EdgeInsets.only(bottom: 8),
-                                                padding: EdgeInsets.all(12),
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 8),
+                                                padding:
+                                                    const EdgeInsets.all(12),
                                                 decoration: BoxDecoration(
                                                   color: isSelected
                                                       ? Colors.red.shade50
@@ -413,7 +416,7 @@ class _CartPageState extends State<CartPage> {
                                                           ? Colors.red
                                                           : Colors.grey,
                                                     ),
-                                                    SizedBox(width: 8),
+                                                    const SizedBox(width: 8),
                                                     Expanded(
                                                       child: Text(
                                                         address['اسم'] ??
@@ -441,11 +444,11 @@ class _CartPageState extends State<CartPage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
                         // وقت التوصيل
                         Container(
-                          padding: EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
@@ -454,7 +457,7 @@ class _CartPageState extends State<CartPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 children: [
                                   Icon(Icons.access_time,
                                       color: Colors.red, size: 20),
@@ -465,7 +468,7 @@ class _CartPageState extends State<CartPage> {
                                           fontSize: 16)),
                                 ],
                               ),
-                              SizedBox(height: 12),
+                              const SizedBox(height: 12),
                               Row(
                                 children: [
                                   Expanded(
@@ -473,13 +476,13 @@ class _CartPageState extends State<CartPage> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('من:',
+                                        const Text('من:',
                                             style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13)),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8),
                                           decoration: BoxDecoration(
                                             color: Colors.red.shade50,
@@ -491,7 +494,7 @@ class _CartPageState extends State<CartPage> {
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<int>(
                                               value: selectedFromHour,
-                                              hint: Text('اختار',
+                                              hint: const Text('اختار',
                                                   style:
                                                       TextStyle(fontSize: 13)),
                                               isExpanded: true,
@@ -500,8 +503,9 @@ class _CartPageState extends State<CartPage> {
                                                         value: h,
                                                         child: Text(
                                                           formatHour(h),
-                                                          style: TextStyle(
-                                                              fontSize: 13),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 13),
                                                         ),
                                                       ))
                                                   .toList(),
@@ -517,19 +521,19 @@ class _CartPageState extends State<CartPage> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        Text('إلى:',
+                                        const Text('إلى:',
                                             style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 13)),
-                                        SizedBox(height: 4),
+                                        const SizedBox(height: 4),
                                         Container(
-                                          padding: EdgeInsets.symmetric(
+                                          padding: const EdgeInsets.symmetric(
                                               horizontal: 8),
                                           decoration: BoxDecoration(
                                             color: Colors.red.shade50,
@@ -541,7 +545,7 @@ class _CartPageState extends State<CartPage> {
                                           child: DropdownButtonHideUnderline(
                                             child: DropdownButton<int>(
                                               value: selectedToHour,
-                                              hint: Text('اختار',
+                                              hint: const Text('اختار',
                                                   style:
                                                       TextStyle(fontSize: 13)),
                                               isExpanded: true,
@@ -550,8 +554,9 @@ class _CartPageState extends State<CartPage> {
                                                         value: h,
                                                         child: Text(
                                                           formatHour(h),
-                                                          style: TextStyle(
-                                                              fontSize: 13),
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 13),
                                                         ),
                                                       ))
                                                   .toList(),
@@ -570,10 +575,10 @@ class _CartPageState extends State<CartPage> {
                               ),
                               if (isDeliverySelected)
                                 Padding(
-                                  padding: EdgeInsets.only(top: 8),
+                                  padding: const EdgeInsets.only(top: 8),
                                   child: Text(
                                     'التوصيل من $deliveryFromText إلى $deliveryToText 🕐',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.green,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -581,7 +586,7 @@ class _CartPageState extends State<CartPage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
 
                         SizedBox(
                           width: double.infinity,
@@ -589,7 +594,7 @@ class _CartPageState extends State<CartPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   canOrder ? Colors.red : Colors.grey,
-                              padding: EdgeInsets.symmetric(vertical: 16),
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
                             ),
@@ -621,8 +626,8 @@ class _CartPageState extends State<CartPage> {
                                   : !isDeliverySelected
                                       ? 'اختار وقت التوصيل أولاً'
                                       : 'تأكيد الطلب',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white),
                             ),
                           ),
                         ),

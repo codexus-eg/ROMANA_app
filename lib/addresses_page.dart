@@ -5,6 +5,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 
 class AddressesPage extends StatefulWidget {
+  const AddressesPage({super.key});
+
   @override
   State<AddressesPage> createState() => _AddressesPageState();
 }
@@ -58,7 +60,7 @@ class _AddressesPageState extends State<AddressesPage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (context) => AddAddressSheet(
@@ -79,18 +81,18 @@ class _AddressesPageState extends State<AddressesPage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text('عناويني 📍',
+          title: const Text('عناويني 📍',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: isLoading
-            ? Center(child: CircularProgressIndicator(color: Colors.red))
+            ? const Center(child: CircularProgressIndicator(color: Colors.red))
             : Column(
                 children: [
                   Expanded(
                     child: addresses.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -104,7 +106,7 @@ class _AddressesPageState extends State<AddressesPage> {
                             ),
                           )
                         : ListView.builder(
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             itemCount: addresses.length,
                             itemBuilder: (context, index) {
                               final address = addresses[index];
@@ -112,26 +114,27 @@ class _AddressesPageState extends State<AddressesPage> {
                                 elevation: 3,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(16)),
-                                margin: EdgeInsets.only(bottom: 12),
+                                margin: const EdgeInsets.only(bottom: 12),
                                 child: ListTile(
                                   leading: CircleAvatar(
                                     backgroundColor: Colors.red.shade50,
-                                    child: Icon(Icons.location_on,
+                                    child: const Icon(Icons.location_on,
                                         color: Colors.red),
                                   ),
                                   title: Text(
                                     address['اسم'] ?? 'عنوان',
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   subtitle: Text(
                                     address['عنوان'] ?? '',
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(color: Colors.grey),
+                                    style: const TextStyle(color: Colors.grey),
                                   ),
                                   trailing: IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red),
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
                                     onPressed: () =>
                                         deleteAddress(address['id']),
                                   ),
@@ -141,19 +144,19 @@ class _AddressesPageState extends State<AddressesPage> {
                           ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: SizedBox(
                       width: double.infinity,
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: showAddAddressDialog,
-                        icon: Icon(Icons.add, color: Colors.white),
-                        label: Text('إضافة عنوان جديد',
+                        icon: const Icon(Icons.add, color: Colors.white),
+                        label: const Text('إضافة عنوان جديد',
                             style:
                                 TextStyle(fontSize: 18, color: Colors.white)),
                       ),
@@ -170,7 +173,8 @@ class AddAddressSheet extends StatefulWidget {
   final String customerId;
   final VoidCallback onSaved;
 
-  AddAddressSheet({required this.customerId, required this.onSaved});
+  const AddAddressSheet(
+      {super.key, required this.customerId, required this.onSaved});
 
   @override
   State<AddAddressSheet> createState() => _AddAddressSheetState();
@@ -208,7 +212,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
         mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('هذه الخدمة لا تتوفر في هذه المنطقة'),
             backgroundColor: Colors.red,
           ),
@@ -216,7 +220,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('تعذر تحديد موقعك!'),
           backgroundColor: Colors.red,
         ),
@@ -227,7 +231,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
   Future<void> saveAddress() async {
     if (_nameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('أدخل اسم العنوان!'),
           backgroundColor: Colors.red,
         ),
@@ -236,7 +240,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
     }
     if (selectedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('اختار الموقع على الخريطة!'),
           backgroundColor: Colors.red,
         ),
@@ -270,14 +274,14 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(20),
+          padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('إضافة عنوان جديد',
+              const Text('إضافة عنوان جديد',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // اسم العنوان
               TextField(
@@ -286,27 +290,27 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
                   labelText: 'اسم العنوان (مثال: المنزل، العمل)',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  prefixIcon: Icon(Icons.label, color: Colors.red),
+                  prefixIcon: const Icon(Icons.label, color: Colors.red),
                   filled: true,
                   fillColor: Colors.red.shade50,
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               // زرار الموقع الحالي
               InkWell(
                 onTap: getCurrentLocation,
                 child: Container(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Colors.red.shade50,
-                    borderRadius: BorderRadius.only(
+                    borderRadius: const BorderRadius.only(
                       topRight: Radius.circular(12),
                       topLeft: Radius.circular(12),
                     ),
                     border: Border.all(color: Colors.red.shade200),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.my_location, color: Colors.red),
@@ -321,7 +325,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
 
               // الخريطة
               ClipRRect(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomRight: Radius.circular(12),
                   bottomLeft: Radius.circular(12),
                 ),
@@ -331,7 +335,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
                     border: Border.all(color: Colors.red.shade200),
                   ),
                   child: GoogleMap(
-                    initialCameraPosition: CameraPosition(
+                    initialCameraPosition: const CameraPosition(
                       target: LatLng(18.2164, 42.5053),
                       zoom: 10,
                     ),
@@ -343,7 +347,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
                         setState(() => selectedLocation = latLng);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text('هذه الخدمة لا تتوفر في هذه المنطقة'),
                             backgroundColor: Colors.red,
                           ),
@@ -353,7 +357,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
                     markers: selectedLocation != null
                         ? {
                             Marker(
-                              markerId: MarkerId('selected'),
+                              markerId: const MarkerId('selected'),
                               position: selectedLocation!,
                             )
                           }
@@ -365,7 +369,7 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
               ),
 
               if (selectedLocation != null)
-                Padding(
+                const Padding(
                   padding: EdgeInsets.only(top: 8),
                   child: Row(
                     children: [
@@ -377,25 +381,25 @@ class _AddAddressSheetState extends State<AddAddressSheet> {
                   ),
                 ),
 
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
 
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.red,
-                    padding: EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
                   ),
                   onPressed: isSaving ? null : saveAddress,
                   child: isSaving
-                      ? CircularProgressIndicator(color: Colors.white)
-                      : Text('حفظ العنوان',
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text('حفظ العنوان',
                           style: TextStyle(fontSize: 18, color: Colors.white)),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
             ],
           ),
         ),

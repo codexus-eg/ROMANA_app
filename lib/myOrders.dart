@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyOrdersPage extends StatefulWidget {
+  const MyOrdersPage({super.key});
+
   @override
   State<MyOrdersPage> createState() => _MyOrdersPageState();
 }
@@ -113,10 +115,10 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      margin: EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 16),
       child: ExpansionTile(
-        tilePadding: EdgeInsets.all(16),
-        childrenPadding: EdgeInsets.all(16),
+        tilePadding: const EdgeInsets.all(16),
+        childrenPadding: const EdgeInsets.all(16),
         leading: CircleAvatar(
           backgroundColor: isDelivered ? Colors.green : Colors.red,
           child: Icon(
@@ -126,27 +128,28 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
         ),
         title: Text(
           'طلب - ${createdAt.length > 10 ? createdAt.substring(0, 10) : createdAt}',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
                 color: getStatusColor(status),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 getStatusText(status),
-                style: TextStyle(color: Colors.white, fontSize: 12),
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Text(
               'الإجمالي: ${total % 1 == 0 ? total.toInt() : total.toStringAsFixed(1)} ريال',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                  color: Colors.red, fontWeight: FontWeight.bold),
             ),
           ],
         ),
@@ -154,16 +157,16 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Divider(),
-              Text('المنتجات:',
+              const Divider(),
+              const Text('المنتجات:',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               ...items.map((item) {
                 final price = fixPrice(getItemPrice(item));
                 final qty = (getItemQty(item) as num).toDouble();
                 final itemTotal = price * qty;
                 return Padding(
-                  padding: EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 8),
                   child: Row(
                     children: [
                       ClipRRect(
@@ -173,56 +176,58 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,
-                          errorBuilder: (c, e, s) =>
-                              Icon(Icons.image, size: 40, color: Colors.grey),
+                          errorBuilder: (c, e, s) => const Icon(Icons.image,
+                              size: 40, color: Colors.grey),
                         ),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(getItemName(item),
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                             Text(
                               '${qty % 1 == 0 ? qty.toInt() : qty} ${getItemUnit(item)}',
-                              style: TextStyle(color: Colors.grey),
+                              style: const TextStyle(color: Colors.grey),
                             ),
                             Text(
                               '${getItemUnit(item)} : $price ريال',
-                              style: TextStyle(color: Colors.red, fontSize: 12),
+                              style: const TextStyle(
+                                  color: Colors.red, fontSize: 12),
                             ),
                           ],
                         ),
                       ),
                       Text(
                         '${itemTotal % 1 == 0 ? itemTotal.toInt() : itemTotal.toStringAsFixed(1)} ريال',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.red, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                 );
               }),
-              Divider(),
+              const Divider(),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('العنوان:',
+                  const Text('العنوان:',
                       style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(address, style: TextStyle(color: Colors.grey)),
+                  Text(address, style: const TextStyle(color: Colors.grey)),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('الإجمالي:',
+                  const Text('الإجمالي:',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                   Text(
                     '${total % 1 == 0 ? total.toInt() : total.toStringAsFixed(1)} ريال',
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                         fontSize: 18),
@@ -242,14 +247,14 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.red,
-        title: Text('طلباتي 📦',
+        title: const Text('طلباتي 📦',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        iconTheme: IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: Colors.red))
+          ? const Center(child: CircularProgressIndicator(color: Colors.red))
           : orders.isEmpty && deliveredOrders.isEmpty
-              ? Center(
+              ? const Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -265,21 +270,21 @@ class _MyOrdersPageState extends State<MyOrdersPage> {
                   onRefresh: loadOrders,
                   color: Colors.red,
                   child: ListView(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     children: [
                       if (orders.isNotEmpty) ...[
-                        Text('الطلبات الجارية',
+                        const Text('الطلبات الجارية',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         ...orders.map((order) => buildOrderCard(order, false)),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                       ],
                       if (deliveredOrders.isNotEmpty) ...[
-                        Text('الطلبات المكتملة',
+                        const Text('الطلبات المكتملة',
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold)),
-                        SizedBox(height: 12),
+                        const SizedBox(height: 12),
                         ...deliveredOrders
                             .map((order) => buildOrderCard(order, true)),
                       ],

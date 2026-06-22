@@ -13,7 +13,7 @@ void main() async {
 
     try {
       await Firebase.initializeApp(
-        options: FirebaseOptions(
+        options: const FirebaseOptions(
           apiKey: "AIzaSyDcRj1bnqhkdsEtKMdtMOc2FI8DSq_Ee0A",
           authDomain: "romana-project.firebaseapp.com",
           projectId: "romana-project",
@@ -38,7 +38,7 @@ void main() async {
 
 class ErrorApp extends StatelessWidget {
   final String error;
-  ErrorApp({required this.error});
+  const ErrorApp({super.key, required this.error});
 
   @override
   Widget build(BuildContext context) {
@@ -47,10 +47,10 @@ class ErrorApp extends StatelessWidget {
         backgroundColor: Colors.red,
         body: Center(
           child: Padding(
-            padding: EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20),
             child: Text(
               'Error: $error',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: const TextStyle(color: Colors.white, fontSize: 16),
               textAlign: TextAlign.center,
             ),
           ),
@@ -62,7 +62,7 @@ class ErrorApp extends StatelessWidget {
 
 class MyApp extends StatelessWidget {
   final bool isOpen;
-  MyApp({required this.isOpen});
+  const MyApp({super.key, required this.isOpen});
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +79,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ClosedPage extends StatelessWidget {
+  const ClosedPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -89,25 +91,25 @@ class ClosedPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.access_time, size: 80, color: Colors.white),
-              SizedBox(height: 20),
-              Text('ROMANA',
+              const Icon(Icons.access_time, size: 80, color: Colors.white),
+              const SizedBox(height: 20),
+              const Text('ROMANA',
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 36,
                       fontWeight: FontWeight.bold)),
-              SizedBox(height: 8),
-              Text('خضروات وفواكه طازجة',
+              const SizedBox(height: 8),
+              const Text('خضروات وفواكه طازجة',
                   style: TextStyle(color: Colors.white70, fontSize: 16)),
-              SizedBox(height: 32),
+              const SizedBox(height: 32),
               Container(
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.symmetric(horizontal: 32),
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.symmetric(horizontal: 32),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
+                  color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Column(
+                child: const Column(
                   children: [
                     Text('التطبيق غير متاح الآن',
                         style: TextStyle(

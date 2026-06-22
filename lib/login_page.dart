@@ -11,6 +11,8 @@ import 'home_page.dart';
 import 'check.dart';
 
 class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -50,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         child: AlertDialog(
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          title: Row(
+          title: const Row(
             children: [
               Icon(Icons.help, color: Colors.red),
               SizedBox(width: 8),
@@ -65,16 +67,16 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 _helpStep('1', Icons.person_add, Colors.blue, 'إنشاء حساب',
                     'اضغط على "تسجيل جديد" وأدخل اسمك ورقم جوالك وإيميلك وباسوردك وحدد موقعك'),
-                Divider(),
+                const Divider(),
                 _helpStep('2', Icons.login, Colors.green, 'تسجيل الدخول',
                     'لو عندك حساب اضغط "تسجيل دخول" وأدخل رقم جوالك وباسوردك'),
-                Divider(),
+                const Divider(),
                 _helpStep('3', Icons.shopping_cart, Colors.orange, 'أضف للسلة',
                     'تصفح المنتجات واختار الكمية واضغط "أضف" لإضافة المنتج للسلة'),
-                Divider(),
+                const Divider(),
                 _helpStep('4', Icons.check_circle, Colors.red, 'أتمم طلبك',
                     'اضغط على أيقونة السلة وراجع طلبك واضغط "تأكيد الطلب"'),
-                Divider(),
+                const Divider(),
                 _helpStep(
                     '5',
                     Icons.delivery_dining,
@@ -92,7 +94,8 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: () => Navigator.pop(context),
-              child: Text('فهمت! 👍', style: TextStyle(color: Colors.white)),
+              child:
+                  const Text('فهمت! 👍', style: TextStyle(color: Colors.white)),
             ),
           ],
         ),
@@ -103,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget _helpStep(String number, IconData icon, Color color, String title,
       String description) {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -118,15 +121,15 @@ class _LoginPageState extends State<LoginPage> {
               child: Icon(icon, color: Colors.white, size: 18),
             ),
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-                SizedBox(height: 4),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 15)),
+                const SizedBox(height: 4),
                 Text(description,
                     style:
                         TextStyle(color: Colors.grey.shade600, fontSize: 13)),
@@ -168,7 +171,7 @@ class _LoginPageState extends State<LoginPage> {
         mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('هذه الخدمة لا تتوفر في هذه المنطقة'),
             backgroundColor: Colors.red,
           ),
@@ -176,7 +179,7 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('تعذر تحديد موقعك!'),
           backgroundColor: Colors.red,
         ),
@@ -218,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
     if (_formKey.currentState!.validate()) {
       if (!_isLogin && selectedLocation == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('اختار موقعك على الخريطة أولاً!'),
             backgroundColor: Colors.red,
           ),
@@ -238,7 +241,7 @@ class _LoginPageState extends State<LoginPage> {
         if (!mounted) return;
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('حصل خطأ! حاول تاني'),
             backgroundColor: Colors.red,
           ),
@@ -257,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('رقم الجوال مسجل بالفعل!'),
           backgroundColor: Colors.red,
         ),
@@ -280,7 +283,7 @@ class _LoginPageState extends State<LoginPage> {
 
     if (sent) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('تم إرسال كود التحقق على إيميلك! ✅'),
           backgroundColor: Colors.green,
         ),
@@ -296,7 +299,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('فشل إرسال الكود! تأكد من الإيميل'),
           backgroundColor: Colors.red,
         ),
@@ -365,7 +368,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('رقم الجوال غير مسجل!'),
           backgroundColor: Colors.red,
         ),
@@ -380,7 +383,7 @@ class _LoginPageState extends State<LoginPage> {
       if (!mounted) return;
       setState(() => _isLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('باسورد غلط!'),
           backgroundColor: Colors.red,
         ),
@@ -420,33 +423,34 @@ class _LoginPageState extends State<LoginPage> {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
             child: Column(
               children: [
-                SizedBox(height: 60),
+                const SizedBox(height: 60),
 
                 // زرار المساعدة
                 Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: Icon(Icons.help_outline, color: Colors.red, size: 28),
+                    icon: const Icon(Icons.help_outline,
+                        color: Colors.red, size: 28),
                     onPressed: _showHelpDialog,
                     tooltip: 'مساعدة',
                   ),
                 ),
 
-                Icon(Icons.shopping_cart, size: 80, color: Colors.red),
-                SizedBox(height: 10),
-                Text('ROMANA',
+                const Icon(Icons.shopping_cart, size: 80, color: Colors.red),
+                const SizedBox(height: 10),
+                const Text('ROMANA',
                     style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                         color: Colors.red)),
-                Text('خضروات وفواكه طازجة',
+                const Text('خضروات وفواكه طازجة',
                     style: TextStyle(fontSize: 14, color: Colors.grey)),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 Container(
                   decoration: BoxDecoration(
@@ -459,7 +463,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: GestureDetector(
                           onTap: () => setState(() => _isLogin = true),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
                               color: _isLogin ? Colors.red : Colors.transparent,
                               borderRadius: BorderRadius.circular(12),
@@ -479,7 +483,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: GestureDetector(
                           onTap: () => setState(() => _isLogin = false),
                           child: Container(
-                            padding: EdgeInsets.symmetric(vertical: 12),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
                             decoration: BoxDecoration(
                               color:
                                   !_isLogin ? Colors.red : Colors.transparent,
@@ -499,7 +503,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 if (!_isLogin) ...[
                   TextFormField(
@@ -509,14 +513,14 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'الاسم',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: Icon(Icons.person, color: Colors.red),
+                      prefixIcon: const Icon(Icons.person, color: Colors.red),
                       filled: true,
                       fillColor: Colors.red.shade50,
                     ),
                     validator: (v) =>
                         !_isLogin && v!.isEmpty ? 'أدخل اسمك' : null,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                 ],
 
                 TextFormField(
@@ -528,13 +532,13 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'رقم الجوال',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: Icon(Icons.phone, color: Colors.red),
+                    prefixIcon: const Icon(Icons.phone, color: Colors.red),
                     filled: true,
                     fillColor: Colors.red.shade50,
                   ),
                   validator: (v) => v!.length < 9 ? 'أدخل رقم جوال صحيح' : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 if (!_isLogin) ...[
                   TextFormField(
@@ -545,7 +549,7 @@ class _LoginPageState extends State<LoginPage> {
                       labelText: 'الإيميل',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: Icon(Icons.email, color: Colors.red),
+                      prefixIcon: const Icon(Icons.email, color: Colors.red),
                       filled: true,
                       fillColor: Colors.red.shade50,
                     ),
@@ -553,7 +557,7 @@ class _LoginPageState extends State<LoginPage> {
                         ? 'أدخل إيميل صحيح'
                         : null,
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                 ],
 
                 TextFormField(
@@ -565,7 +569,7 @@ class _LoginPageState extends State<LoginPage> {
                     labelText: 'الباسورد',
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: Icon(Icons.lock, color: Colors.red),
+                    prefixIcon: const Icon(Icons.lock, color: Colors.red),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
@@ -583,7 +587,7 @@ class _LoginPageState extends State<LoginPage> {
                       ? 'الباسورد لازم يكون 6 أحرف على الأقل'
                       : null,
                 ),
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 if (!_isLogin) ...[
                   Container(
@@ -596,15 +600,15 @@ class _LoginPageState extends State<LoginPage> {
                         InkWell(
                           onTap: getCurrentLocation,
                           child: Container(
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
-                              borderRadius: BorderRadius.only(
+                              borderRadius: const BorderRadius.only(
                                 topRight: Radius.circular(12),
                                 topLeft: Radius.circular(12),
                               ),
                             ),
-                            child: Row(
+                            child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(Icons.my_location, color: Colors.red),
@@ -618,14 +622,14 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         ClipRRect(
-                          borderRadius: BorderRadius.only(
+                          borderRadius: const BorderRadius.only(
                             bottomRight: Radius.circular(12),
                             bottomLeft: Radius.circular(12),
                           ),
                           child: SizedBox(
                             height: 250,
                             child: GoogleMap(
-                              initialCameraPosition: CameraPosition(
+                              initialCameraPosition: const CameraPosition(
                                 target: LatLng(18.2164, 42.5053),
                                 zoom: 10,
                               ),
@@ -641,7 +645,7 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                                 } else {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
+                                    const SnackBar(
                                       content: Text(
                                           'هذه الخدمة لا تتوفر في هذه المنطقة'),
                                       backgroundColor: Colors.red,
@@ -652,7 +656,7 @@ class _LoginPageState extends State<LoginPage> {
                               markers: selectedLocation != null
                                   ? {
                                       Marker(
-                                        markerId: MarkerId('selected'),
+                                        markerId: const MarkerId('selected'),
                                         position: selectedLocation!,
                                       )
                                     }
@@ -667,14 +671,14 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   if (selectedLocation != null)
                     Container(
-                      margin: EdgeInsets.only(top: 8),
-                      padding: EdgeInsets.all(12),
+                      margin: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color: Colors.green.shade50,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: Colors.green.shade200),
                       ),
-                      child: Row(
+                      child: const Row(
                         children: [
                           Icon(Icons.check_circle,
                               color: Colors.green, size: 20),
@@ -688,26 +692,26 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                 ],
 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
-                      padding: EdgeInsets.symmetric(vertical: 16),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: _isLoading ? null : _submit,
                     child: _isLoading
-                        ? CircularProgressIndicator(color: Colors.white)
+                        ? const CircularProgressIndicator(color: Colors.white)
                         : Text(_isLogin ? 'دخول' : 'إرسال كود التحقق',
-                            style:
-                                TextStyle(fontSize: 18, color: Colors.white)),
+                            style: const TextStyle(
+                                fontSize: 18, color: Colors.white)),
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
               ],
             ),
           ),

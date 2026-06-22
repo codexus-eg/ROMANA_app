@@ -9,7 +9,8 @@ class OrderTrackingPage extends StatefulWidget {
   final String address;
   final String orderId;
 
-  OrderTrackingPage({
+  const OrderTrackingPage({
+    super.key,
     required this.cartItems,
     required this.total,
     required this.address,
@@ -257,10 +258,10 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
           backgroundColor: Colors.red,
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: Icon(Icons.home, color: Colors.white),
+            icon: const Icon(Icons.home, color: Colors.white),
             onPressed: goHome,
           ),
-          title: Text('تتبع طلبك 📦',
+          title: const Text('تتبع طلبك 📦',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
@@ -269,7 +270,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
           stream: _orderStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                   child: CircularProgressIndicator(color: Colors.red));
             }
 
@@ -278,23 +279,24 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.check_circle, size: 80, color: Colors.green),
-                    SizedBox(height: 16),
-                    Text('تم توصيل طلبك! 🎉',
+                    const Icon(Icons.check_circle,
+                        size: 80, color: Colors.green),
+                    const SizedBox(height: 16),
+                    const Text('تم توصيل طلبك! 🎉',
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 24),
+                    const SizedBox(height: 24),
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 12),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                       ),
                       onPressed: goHome,
-                      icon: Icon(Icons.home, color: Colors.white),
-                      label: Text('الرئيسية',
+                      icon: const Icon(Icons.home, color: Colors.white),
+                      label: const Text('الرئيسية',
                           style: TextStyle(fontSize: 16, color: Colors.white)),
                     ),
                   ],
@@ -328,8 +330,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
             return Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(16),
-                  padding: EdgeInsets.all(20),
+                  margin: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.red.shade50,
                     borderRadius: BorderRadius.circular(16),
@@ -339,19 +341,20 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
                     children: [
                       Icon(step['icon'] as IconData,
                           size: 60, color: step['color'] as Color),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Text(step['title'] as String,
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center),
-                      SizedBox(height: 6),
+                      const SizedBox(height: 6),
                       Text(step['subtitle'] as String,
-                          style: TextStyle(color: Colors.grey, fontSize: 14)),
+                          style: const TextStyle(
+                              color: Colors.grey, fontSize: 14)),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: List.generate(steps.length, (index) {
                       return Expanded(
@@ -380,21 +383,21 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
                     }),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Expanded(
                   child: ListView(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     children: [
-                      Text('تفاصيل الطلب',
+                      const Text('تفاصيل الطلب',
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       ...widget.cartItems.map((item) {
                         final price = fixPrice(getItemPrice(item));
                         final qty = (getItemQty(item) as num).toDouble();
                         final itemTotal = price * qty;
                         return Card(
-                          margin: EdgeInsets.only(bottom: 8),
+                          margin: const EdgeInsets.only(bottom: 8),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                           child: ListTile(
@@ -405,26 +408,29 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,
-                                errorBuilder: (c, e, s) => Icon(Icons.image,
-                                    size: 40, color: Colors.grey),
+                                errorBuilder: (c, e, s) => const Icon(
+                                    Icons.image,
+                                    size: 40,
+                                    color: Colors.grey),
                               ),
                             ),
                             title: Text(getItemName(item),
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
                             subtitle: Text(
                                 '\u200E${qty % 1 == 0 ? qty.toInt() : qty} ${getItemUnit(item)}'),
                             trailing: Text(
                               '\u200E${itemTotal % 1 == 0 ? itemTotal.toInt() : itemTotal.toStringAsFixed(1)} ريال',
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.red,
                                   fontWeight: FontWeight.bold),
                             ),
                           ),
                         );
                       }),
-                      SizedBox(height: 12),
+                      const SizedBox(height: 12),
                       Container(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
                           color: Colors.red.shade50,
                           borderRadius: BorderRadius.circular(12),
@@ -434,27 +440,28 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('العنوان:',
+                                const Text('العنوان:',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold)),
                                 Expanded(
                                   child: Text(widget.address,
-                                      style: TextStyle(color: Colors.grey),
+                                      style:
+                                          const TextStyle(color: Colors.grey),
                                       textAlign: TextAlign.left),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 8),
+                            const SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('الإجمالي:',
+                                const Text('الإجمالي:',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 18)),
                                 Text(
                                   '\u200E${widget.total % 1 == 0 ? widget.total.toInt() : widget.total.toStringAsFixed(1)} ريال',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.red,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18),

@@ -5,7 +5,8 @@ class OTPScreen extends StatefulWidget {
   final String generatedOTP;
   final Function() onVerified;
 
-  OTPScreen({required this.generatedOTP, required this.onVerified});
+  const OTPScreen(
+      {super.key, required this.generatedOTP, required this.onVerified});
 
   @override
   _OTPScreenState createState() => _OTPScreenState();
@@ -29,27 +30,27 @@ class _OTPScreenState extends State<OTPScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text('التحقق من الكود',
+          title: const Text('التحقق من الكود',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => Navigator.pop(context),
           ),
         ),
         body: Padding(
-          padding: EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.email, size: 80, color: Colors.red),
-              SizedBox(height: 24),
-              Text(
+              const Icon(Icons.email, size: 80, color: Colors.red),
+              const SizedBox(height: 24),
+              const Text(
                 'أدخل كود التحقق المرسل لإيميلك',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.center,
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               TextFormField(
                 controller: _pinController,
                 keyboardType: TextInputType.number,
@@ -57,7 +58,7 @@ class _OTPScreenState extends State<OTPScreen> {
                 textAlign: TextAlign.center,
                 textDirection: TextDirection.ltr,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: TextStyle(fontSize: 24, letterSpacing: 8),
+                style: const TextStyle(fontSize: 24, letterSpacing: 8),
                 decoration: InputDecoration(
                   labelText: 'كود التحقق',
                   border: OutlineInputBorder(
@@ -72,28 +73,28 @@ class _OTPScreenState extends State<OTPScreen> {
                   }
                 },
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               _isLoading
-                  ? CircularProgressIndicator(color: Colors.red)
+                  ? const CircularProgressIndicator(color: Colors.red)
                   : SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: () => _verifyOTP(_pinController.text),
-                        child: Text('تأكيد الكود',
+                        child: const Text('تأكيد الكود',
                             style:
                                 TextStyle(color: Colors.white, fontSize: 18)),
                       ),
                     ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('إعادة إرسال الكود',
+                child: const Text('إعادة إرسال الكود',
                     style: TextStyle(color: Colors.red)),
               ),
             ],
@@ -106,7 +107,7 @@ class _OTPScreenState extends State<OTPScreen> {
   void _verifyOTP(String pin) async {
     if (pin.length < 6) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text('يرجى إدخال الكود كاملاً'),
             backgroundColor: Colors.red),
       );
@@ -118,7 +119,7 @@ class _OTPScreenState extends State<OTPScreen> {
       await widget.onVerified();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
             content: Text('هذا الكود خطأ، حاول مرة أخرى'),
             backgroundColor: Colors.red),
       );

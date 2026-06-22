@@ -6,6 +6,8 @@ import 'home_page.dart';
 import 'order_tracking_page.dart';
 
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
@@ -28,17 +30,17 @@ class _SplashScreenState extends State<SplashScreen>
 
     _bgController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1500),
     );
 
     _logoController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1200),
     );
 
     _textController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 800),
     );
 
     _bgScale = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -50,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Interval(0.0, 0.5)),
+      CurvedAnimation(parent: _logoController, curve: const Interval(0.0, 0.5)),
     );
 
     _textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -58,7 +60,7 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     _textSlide = Tween<Offset>(
-      begin: Offset(0, 0.5),
+      begin: const Offset(0, 0.5),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _textController, curve: Curves.easeOut));
 
@@ -69,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
     await _bgController.forward();
     await _logoController.forward();
     await _textController.forward();
-    await Future.delayed(Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 800));
     _navigate();
   }
 
@@ -151,7 +153,7 @@ class _SplashScreenState extends State<SplashScreen>
             context,
             MaterialPageRoute(
               builder: (context) => OrderTrackingPage(
-                cartItems: [],
+                cartItems: const [],
                 total: activeOrderTotal,
                 address: activeOrderAddress,
                 orderId: activeOrderId,
@@ -209,7 +211,7 @@ class _SplashScreenState extends State<SplashScreen>
                   child: Container(
                     width: 300,
                     height: 300,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.red,
                     ),
@@ -232,24 +234,24 @@ class _SplashScreenState extends State<SplashScreen>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 20,
                                 spreadRadius: 5,
                               ),
                             ],
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Text('🛒', style: TextStyle(fontSize: 60)),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                     SlideTransition(
                       position: _textSlide,
                       child: FadeTransition(
                         opacity: _textOpacity,
-                        child: Column(
+                        child: const Column(
                           children: [
                             Text(
                               'ROMANA',
@@ -281,7 +283,7 @@ class _SplashScreenState extends State<SplashScreen>
                 right: 40,
                 child: FadeTransition(
                   opacity: _textOpacity,
-                  child: Text('🍅', style: TextStyle(fontSize: 30)),
+                  child: const Text('🍅', style: TextStyle(fontSize: 30)),
                 ),
               ),
               Positioned(
@@ -289,7 +291,7 @@ class _SplashScreenState extends State<SplashScreen>
                 left: 30,
                 child: FadeTransition(
                   opacity: _textOpacity,
-                  child: Text('🥦', style: TextStyle(fontSize: 25)),
+                  child: const Text('🥦', style: TextStyle(fontSize: 25)),
                 ),
               ),
               Positioned(
@@ -297,7 +299,7 @@ class _SplashScreenState extends State<SplashScreen>
                 right: 30,
                 child: FadeTransition(
                   opacity: _textOpacity,
-                  child: Text('🍊', style: TextStyle(fontSize: 28)),
+                  child: const Text('🍊', style: TextStyle(fontSize: 28)),
                 ),
               ),
               Positioned(
@@ -305,7 +307,7 @@ class _SplashScreenState extends State<SplashScreen>
                 left: 40,
                 child: FadeTransition(
                   opacity: _textOpacity,
-                  child: Text('🍇', style: TextStyle(fontSize: 26)),
+                  child: const Text('🍇', style: TextStyle(fontSize: 26)),
                 ),
               ),
             ],

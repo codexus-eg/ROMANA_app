@@ -11,7 +11,8 @@ class InvoicePage extends StatefulWidget {
   final String deliveryFrom;
   final String deliveryTo;
 
-  InvoicePage({
+  const InvoicePage({
+    super.key,
     required this.cartItems,
     required this.total,
     required this.address,
@@ -172,7 +173,7 @@ class _InvoicePageState extends State<InvoicePage> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('فشل إرسال الطلب! حاول تاني'),
           backgroundColor: Colors.red,
         ),
@@ -190,24 +191,24 @@ class _InvoicePageState extends State<InvoicePage> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.red,
-          title: Text('الفاتورة 🧾',
+          title: const Text('الفاتورة 🧾',
               style:
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          iconTheme: IconThemeData(color: Colors.white),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: isLoadingWallet
-            ? Center(child: CircularProgressIndicator(color: Colors.red))
+            ? const Center(child: CircularProgressIndicator(color: Colors.red))
             : Column(
                 children: [
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(16),
+                            padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
                               color: Colors.red.shade50,
                               borderRadius: BorderRadius.circular(16),
@@ -215,17 +216,17 @@ class _InvoicePageState extends State<InvoicePage> {
                             ),
                             child: Column(
                               children: [
-                                Icon(Icons.receipt_long,
+                                const Icon(Icons.receipt_long,
                                     size: 50, color: Colors.red),
-                                SizedBox(height: 8),
-                                Text('فاتورة طلبك',
+                                const SizedBox(height: 8),
+                                const Text('فاتورة طلبك',
                                     style: TextStyle(
                                         fontSize: 22,
                                         fontWeight: FontWeight.bold)),
                                 if (orderNumber > 0) ...[
-                                  SizedBox(height: 4),
+                                  const SizedBox(height: 4),
                                   Container(
-                                    padding: EdgeInsets.symmetric(
+                                    padding: const EdgeInsets.symmetric(
                                         horizontal: 16, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: Colors.red,
@@ -233,7 +234,7 @@ class _InvoicePageState extends State<InvoicePage> {
                                     ),
                                     child: Text(
                                       'طلب رقم #$orderNumber',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -241,26 +242,26 @@ class _InvoicePageState extends State<InvoicePage> {
                                     ),
                                   ),
                                 ],
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.location_on,
+                                    const Icon(Icons.location_on,
                                         color: Colors.red, size: 18),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
                                       widget.addressName,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           color: Colors.red,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 16),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 4),
+                                const SizedBox(height: 4),
                                 Text(
                                   widget.address,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.grey, fontSize: 12),
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
@@ -269,10 +270,10 @@ class _InvoicePageState extends State<InvoicePage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 16),
+                          const SizedBox(height: 16),
                           Container(
                             width: double.infinity,
-                            padding: EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
                               color: Colors.blue.shade50,
                               borderRadius: BorderRadius.circular(12),
@@ -280,11 +281,12 @@ class _InvoicePageState extends State<InvoicePage> {
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.access_time, color: Colors.blue),
-                                SizedBox(width: 8),
+                                const Icon(Icons.access_time,
+                                    color: Colors.blue),
+                                const SizedBox(width: 8),
                                 Text(
                                   'وقت التوصيل: ${widget.deliveryFrom} - ${widget.deliveryTo}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Colors.blue,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 15),
@@ -292,18 +294,18 @@ class _InvoicePageState extends State<InvoicePage> {
                               ],
                             ),
                           ),
-                          SizedBox(height: 16),
-                          Text('المنتجات',
+                          const SizedBox(height: 16),
+                          const Text('المنتجات',
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.bold)),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           ...widget.cartItems.map((item) {
                             final qty = (item['qty'] as num).toDouble();
                             final price = fixPrice(item['price']);
                             final itemTotal = qty * price;
                             return Container(
-                              margin: EdgeInsets.only(bottom: 8),
-                              padding: EdgeInsets.all(12),
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.grey.shade50,
                                 borderRadius: BorderRadius.circular(12),
@@ -318,25 +320,25 @@ class _InvoicePageState extends State<InvoicePage> {
                                       width: 50,
                                       height: 50,
                                       fit: BoxFit.cover,
-                                      errorBuilder: (c, e, s) => Icon(
+                                      errorBuilder: (c, e, s) => const Icon(
                                           Icons.image,
                                           size: 40,
                                           color: Colors.grey),
                                     ),
                                   ),
-                                  SizedBox(width: 12),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(item['name'],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 15)),
                                         Text(
                                           '\u200E${qty % 1 == 0 ? qty.toInt() : qty} ${item['unit']} × $price ريال',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               color: Colors.grey, fontSize: 13),
                                         ),
                                       ],
@@ -344,7 +346,7 @@ class _InvoicePageState extends State<InvoicePage> {
                                   ),
                                   Text(
                                     '${formatNum(itemTotal)} ريال',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: Colors.red,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 15),
@@ -353,42 +355,43 @@ class _InvoicePageState extends State<InvoicePage> {
                               ),
                             );
                           }),
-                          SizedBox(height: 16),
-                          Divider(thickness: 2),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 16),
+                          const Divider(thickness: 2),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('إجمالي المنتجات:',
+                              const Text('إجمالي المنتجات:',
                                   style: TextStyle(fontSize: 16)),
                               Text('${formatNum(widget.total)} ريال',
-                                  style: TextStyle(fontSize: 16)),
+                                  style: const TextStyle(fontSize: 16)),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('رسوم التوصيل:',
+                              const Text('رسوم التوصيل:',
                                   style: TextStyle(fontSize: 16)),
                               Text('\u200E${deliveryFee.toInt()} ريال',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 16, color: Colors.orange)),
                             ],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('الإجمالي:', style: TextStyle(fontSize: 16)),
-                              Text('${formatNum(grandTotal)} ريال',
+                              const Text('الإجمالي:',
                                   style: TextStyle(fontSize: 16)),
+                              Text('${formatNum(grandTotal)} ريال',
+                                  style: const TextStyle(fontSize: 16)),
                             ],
                           ),
                           if (walletBalance > 0) ...[
-                            SizedBox(height: 12),
+                            const SizedBox(height: 12),
                             Container(
-                              padding: EdgeInsets.all(12),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
                                 color: Colors.green.shade50,
                                 borderRadius: BorderRadius.circular(12),
@@ -401,7 +404,7 @@ class _InvoicePageState extends State<InvoicePage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Row(children: [
+                                      const Row(children: [
                                         Icon(Icons.account_balance_wallet,
                                             color: Colors.green),
                                         SizedBox(width: 8),
@@ -413,23 +416,23 @@ class _InvoicePageState extends State<InvoicePage> {
                                       ]),
                                       Text(
                                         '${formatNum(walletBalance)} ريال',
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 16,
                                             color: Colors.green,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
-                                  SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                                   Container(
-                                    padding: EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(8),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
                                       '\u200E${formatNum(grandTotal)} - ${formatNum(walletBalance)} = ${formatNum(afterWallet)} ريال',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 15,
                                           color: Colors.green,
                                           fontWeight: FontWeight.bold),
@@ -440,19 +443,19 @@ class _InvoicePageState extends State<InvoicePage> {
                               ),
                             ),
                           ],
-                          SizedBox(height: 8),
-                          Divider(thickness: 2),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
+                          const Divider(thickness: 2),
+                          const SizedBox(height: 8),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text('المبلغ المطلوب:',
+                              const Text('المبلغ المطلوب:',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold)),
                               Text(
                                 '${formatNum(afterWallet)} ريال',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 20,
                                     color: Colors.red,
                                     fontWeight: FontWeight.bold),
@@ -461,10 +464,10 @@ class _InvoicePageState extends State<InvoicePage> {
                           ),
                           if (walletBalance > 0)
                             Padding(
-                              padding: EdgeInsets.only(top: 8),
+                              padding: const EdgeInsets.only(top: 8),
                               child: Text(
                                 'تم خصم ${formatNum(walletBalance)} ريال من محفظتك 🎉',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.green,
                                     fontWeight: FontWeight.bold),
                                 textAlign: TextAlign.center,
@@ -475,14 +478,14 @@ class _InvoicePageState extends State<InvoicePage> {
                     ),
                   ),
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.shade300,
                           blurRadius: 10,
-                          offset: Offset(0, -3),
+                          offset: const Offset(0, -3),
                         ),
                       ],
                     ),
@@ -491,14 +494,15 @@ class _InvoicePageState extends State<InvoicePage> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12)),
                         ),
                         onPressed: isOrdering ? null : confirmOrder,
                         child: isOrdering
-                            ? CircularProgressIndicator(color: Colors.white)
-                            : Text('تأكيد الطلب ✅',
+                            ? const CircularProgressIndicator(
+                                color: Colors.white)
+                            : const Text('تأكيد الطلب ✅',
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.white)),
                       ),
