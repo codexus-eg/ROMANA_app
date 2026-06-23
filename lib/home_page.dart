@@ -12,6 +12,7 @@ import 'myOrders.dart';
 import 'order_tracking_page.dart';
 import 'login_page.dart';
 import 'addresses_page.dart';
+import 'account_page.dart';
 
 class HomePage extends StatefulWidget {
   final String name;
@@ -733,6 +734,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       Text(widget.name,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                     ]),
+                    onTap: () => Future.delayed(
+                        Duration.zero,
+                        () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AccountPage()))),
                   ),
                   PopupMenuItem(
                     child: customerId.isEmpty
