@@ -25,15 +25,6 @@ workflows:
           flutter pub get
 
       - name: Setup iOS Project
-        script: |
-          flutter build ios --config-only
-          cd ios
-          if [ -f "Podfile" ]; then
-            # السطرين دول بيعدلوا الـ Podfile أوتوماتيك لـ iOS 14 بمجرد ما يتولد
-            sed -i '' "s/^# platform :ios.*/platform :ios, '14.0'/" Podfile
-            sed -i '' "s/^platform :ios.*/platform :ios, '14.0'/" Podfile
-            pod install --repo-update
-          fi
 
       - name: Apply Vault Profiles
         script: xcode-project use-profiles
