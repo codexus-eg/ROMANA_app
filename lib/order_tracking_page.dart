@@ -74,20 +74,28 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
     const androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(android: androidSettings);
-    await _notifications.initialize(initSettings);
+
+    // تم التعديل إلى settings بدلاً من initializationSettings
+    await _notifications.initialize(settings: initSettings);
   }
 
   Future<void> _showNotification(String title, String body) async {
     const androidDetails = AndroidNotificationDetails(
-      'romana_channel',
-      'ROMANA',
+      'romana_channel', // id
+      'ROMANA', // name
       channelDescription: 'إشعارات تتبع الطلب',
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/ic_launcher',
     );
     const notificationDetails = NotificationDetails(android: androidDetails);
-    await _notifications.show(0, title, body, notificationDetails);
+
+    await _notifications.show(
+      id: 0,
+      title: title,
+      body: body,
+      notificationDetails: notificationDetails,
+    );
   }
 
   String _getStatusTitle(String status) {
@@ -138,13 +146,13 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
         final status = doc.data()?['status'] ?? '';
         if (status == 'delivered' && !autoMoved) {
           await moveToDelivered(doc.data()!);
-          if (mounted) {
-            Navigator.popUntil(context, (route) => route.isFirst);
-          }
+          // تم التعديل إلى !mounted الخاصة بالـ State
+          if (!mounted) return;
+          Navigator.popUntil(context, (route) => route.isFirst);
         }
       }
     } catch (e) {
-      print('Error checking delivered: $e');
+      debugPrint('Error checking delivered: $e');
     }
   }
 
@@ -203,9 +211,9 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
     await prefs.remove('activeOrderAddress');
     await prefs.remove('activeOrderTotal');
     await prefs.remove('activeOrderItems');
-    if (mounted) {
-      Navigator.popUntil(context, (route) => route.isFirst);
-    }
+    // تم التعديل إلى !mounted الخاصة بالـ State
+    if (!mounted) return;
+    Navigator.popUntil(context, (route) => route.isFirst);
   }
 
   Future<void> moveToDelivered(Map<String, dynamic> orderData) async {
@@ -241,16 +249,17 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
       await prefs.setBool('quantitiesCleared', true);
     } catch (e) {
       autoMoved = false;
-      print('Error moving to delivered: $e');
+      debugPrint('Error moving to delivered: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, Object? result) async {
+        if (didPop) return;
         await goHome();
-        return false;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -309,7 +318,6 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
             final currentStep = getStepIndex(status);
             final step = steps[currentStep];
 
-            // إرسال إشعار لما يتغير الستاتس
             if (_lastStatus != status && _lastStatus.isNotEmpty) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 _showNotification(
@@ -321,9 +329,9 @@ class _OrderTrackingPageState extends State<OrderTrackingPage>
             if (status == 'delivered' && !autoMoved) {
               WidgetsBinding.instance.addPostFrameCallback((_) async {
                 await moveToDelivered(data);
-                if (mounted) {
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                }
+                // تم التعديل إلى !mounted الخاصة بالـ State
+                if (!mounted) return;
+                Navigator.popUntil(context, (route) => route.isFirst);
               });
             }
 
