@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'splash_screen.dart';
 
 void main() async {
@@ -12,25 +14,37 @@ void main() async {
     };
 
     try {
-      await Firebase.initializeApp(
-        options: const FirebaseOptions(
+      // تجهيز إعدادات الفايربيز حسب نوع النظام (أندرويد أو ايفون)
+      FirebaseOptions? firebaseOptions;
+
+      if (Platform.isAndroid) {
+        firebaseOptions = const FirebaseOptions(
           apiKey: "AIzaSyDcRj1bnqhkdsEtKMdtMOc2FI8DSq_Ee0A",
           authDomain: "romana-project.firebaseapp.com",
           projectId: "romana-project",
           storageBucket: "romana-project.firebasestorage.app",
           messagingSenderId: "771775359247",
           appId: "1:771775359247:android:17966e383e2b1e0442367a",
-        ),
-      );
+        );
+      } else if (Platform.isIOS) {
+        firebaseOptions = const FirebaseOptions(
+          apiKey: "AIzaSyB8BcE3QBYJZ09zeAwJT88bXDYN7AZyzro", // من ملف الـ plist
+          authDomain: "romana-project.firebaseapp.com",
+          projectId: "romana-project",
+          storageBucket: "romana-project.firebasestorage.app",
+          messagingSenderId: "771775359247",
+          appId:
+              "1:771775359247:ios:84b0a7d820f40ad542367a", // من ملف الـ plist
+          iosBundleId: "com.romana.codexus.app", // من ملف الـ plist
+        );
+      }
+
+      await Firebase.initializeApp(options: firebaseOptions);
     } catch (e) {
       debugPrint('Firebase error: $e');
     }
 
-    final now = DateTime.now();
-    final hour = now.hour;
-    final isOpen = hour >= 8 && hour < 24;
-
-    runApp(MyApp(isOpen: isOpen));
+    runApp(const MyApp());
   }, (error, stack) {
     runApp(ErrorApp(error: error.toString()));
   });
@@ -61,8 +75,7 @@ class ErrorApp extends StatelessWidget {
 }
 
 class MyApp extends StatelessWidget {
-  final bool isOpen;
-  const MyApp({super.key, required this.isOpen});
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +86,73 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.red,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
       ),
-      home: isOpen ? SplashScreen() : ClosedPage(),
+      home: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('settings')
+            .doc('app_status')
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              backgroundColor: Colors.red,
+              body:
+                  Center(child: CircularProgressIndicator(color: Colors.white)),
+            );
+          }
+
+          bool isOpen = true;
+          String currentMessage = 'التطبيق غير متاح الآن';
+          String timeMessage = 'متاح قريباً';
+
+          if (snapshot.hasData && snapshot.data!.exists) {
+            final data = snapshot.data!.data() as Map<String, dynamic>;
+
+            // قراءة البيانات من الفايربيز مع تحويل النصوص لأرقام
+            bool isManuallyOpen =
+                data['is_open'].toString().toLowerCase() == 'true';
+            int startHour = int.tryParse(data['start_hour'].toString()) ?? 8;
+            int endHour = int.tryParse(data['end_hour'].toString()) ?? 24;
+            String manualCloseMessage = data['close_message']?.toString() ??
+                'التطبيق مغلق حالياً للصيانة أو التحديث';
+
+            final now = DateTime.now();
+            final hour = now.hour;
+
+            bool isTimeValid = hour >= startHour && hour < endHour;
+
+            isOpen = isManuallyOpen && isTimeValid;
+
+            if (!isManuallyOpen) {
+              currentMessage = manualCloseMessage;
+              timeMessage = 'يرجى المحاولة في وقت لاحق';
+            } else if (!isTimeValid) {
+              currentMessage = 'التطبيق مغلق الآن';
+              timeMessage =
+                  'متاح من ${startHour > 12 ? startHour - 12 : startHour}:00 ${startHour >= 12 ? "م" : "ص"}\nحتى ${endHour > 12 ? endHour - 12 : endHour}:00 ${endHour >= 12 && endHour < 24 ? "م" : "ص"}';
+            }
+          }
+
+          return isOpen
+              ? const SplashScreen()
+              : ClosedPage(
+                  mainMessage: currentMessage,
+                  subMessage: timeMessage,
+                );
+        },
+      ),
     );
   }
 }
 
 class ClosedPage extends StatelessWidget {
-  const ClosedPage({super.key});
+  final String mainMessage;
+  final String subMessage;
+
+  const ClosedPage({
+    super.key,
+    required this.mainMessage,
+    required this.subMessage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -109,18 +182,19 @@ class ClosedPage extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Column(
+                child: Column(
                   children: [
-                    Text('التطبيق غير متاح الآن',
-                        style: TextStyle(
+                    Text(mainMessage,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 20,
                             fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12),
-                    Text('متاح من الساعة 8:00 صباحاً',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
-                    Text('حتى الساعة 12:00 منتصف الليل',
-                        style: TextStyle(color: Colors.white, fontSize: 16)),
+                    const SizedBox(height: 12),
+                    Text(subMessage,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Colors.white, fontSize: 16, height: 1.5)),
                   ],
                 ),
               ),
