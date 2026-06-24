@@ -19,6 +19,14 @@ workflows:
           - ios_cert_manual
 
     scripts:
+      - name: Clean and Get Dependencies
+        script: |
+          flutter clean
+          flutter pub get
+
+      - name: Apply Vault Profiles
+        script: xcode-project use-profiles
+
       - name: Build IPA
         script: |
           flutter build ipa --release --export-options-plist=/Users/builder/export_options.plist
