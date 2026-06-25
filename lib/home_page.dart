@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   List<Map<String, dynamic>> allProducts = [];
   List<Map<String, dynamic>> ads = [];
   bool isLoading = true;
+  bool isCustomerLoaded = false; // التعديل الأول: لتأكيد انتهاء تحميل البيانات
   String customerName = '';
   String customerId = '';
   String searchQuery = '';
@@ -67,6 +68,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       setState(() {
         customerName = name.isNotEmpty ? name : widget.name;
         customerId = id;
+        isCustomerLoaded =
+            true; // نؤكد هنا أن البيانات تم تحميلها حتى لو كانت فارغة (كزائر)
       });
     }
   }
@@ -153,7 +156,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       final storeUrl = ad['رابط_المتجر'] ?? '';
 
       if (packageName.isNotEmpty) {
-        // أول بيجرب يفتح التطبيق لو موجود
         try {
           final appUri = Uri.parse('android-app://$packageName');
           if (await canLaunchUrl(appUri)) {
@@ -162,7 +164,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           }
         } catch (e) {}
 
-        // لو مش موجود يروح Play Store
         try {
           final marketUri = Uri.parse('market://details?id=$packageName');
           if (await canLaunchUrl(marketUri)) {
@@ -172,7 +173,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         } catch (e) {}
       }
 
-      // آخر حل يفتح الرابط عادي
       if (storeUrl.isNotEmpty) {
         try {
           final uri = Uri.parse(storeUrl);
@@ -318,7 +318,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           width: double.infinity,
                           height: 250,
                           decoration: BoxDecoration(
-                            color: Colors.black.withValues(alpha: 0.5),
+                            color: Colors.black.withOpacity(0.5),
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(24)),
                           ),
@@ -531,7 +531,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.red.withValues(alpha: 0.3),
+                          color: Colors.red.withOpacity(0.3),
                           blurRadius: 10,
                           spreadRadius: 2,
                         ),
@@ -540,7 +540,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // كرات بتلف حول حرف R
                         ...List.generate(6, (index) {
                           final angle = (index / 6 * 2 * pi) +
                               (controller.value * 2 * pi);
@@ -565,7 +564,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             ),
                           );
                         }),
-                        // حرف R
                         const Text(
                           'R',
                           style: TextStyle(
@@ -592,19 +590,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    final displayName = customerName.isNotEmpty ? customerName : widget.name;
-
-    if (displayName.isEmpty) {
+    // التعديل الثاني: منع التحميل اللانهائي للزائر
+    if (!isCustomerLoaded) {
       return const Scaffold(
           body: Center(child: CircularProgressIndicator(color: Colors.red)));
     }
 
+    final displayName = customerName.isNotEmpty ? customerName : widget.name;
+
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('customerName', isEqualTo: displayName)
-          .where('status',
-              whereIn: ['pending', 'approved', 'in_progress']).snapshots(),
+      // التعديل الثالث: إيقاف استدعاء البيانات من الفايربيز إذا كان المستخدم زائر (وفرنا تحميل وسرعنا الأداء)
+      stream: customerId.isEmpty
+          ? null
+          : FirebaseFirestore.instance
+              .collection('orders')
+              .where('customerName', isEqualTo: displayName)
+              .where('status',
+                  whereIn: ['pending', 'approved', 'in_progress']).snapshots(),
       builder: (context, snapshot) {
         final hasActiveOrder =
             snapshot.hasData && snapshot.data!.docs.isNotEmpty;
@@ -730,7 +732,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     child: Row(children: [
                       const Icon(Icons.person, color: Colors.red),
                       const SizedBox(width: 8),
-                      Text(widget.name,
+                      // التعديل الرابع: يظهر للزائر زر تسجيل الدخول هنا
+                      Text(
+                          customerId.isEmpty
+                              ? 'تسجيل الدخول / زائر'
+                              : displayName,
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                     ]),
                     onTap: () => Future.delayed(
@@ -738,7 +744,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const AccountPage()))),
+                                builder: (context) => customerId.isEmpty
+                                    ? const LoginPage()
+                                    : const AccountPage()))),
                   ),
                   PopupMenuItem(
                     child: customerId.isEmpty
@@ -781,12 +789,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       SizedBox(width: 8),
                       Text('طلباتي')
                     ]),
+                    // التعديل الخامس: لو زائر يوجهه للتسجيل
                     onTap: () => Future.delayed(
                         Duration.zero,
                         () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => MyOrdersPage()))),
+                                builder: (context) => customerId.isEmpty
+                                    ? const LoginPage()
+                                    : MyOrdersPage()))),
                   ),
                   PopupMenuItem(
                     child: const Row(children: [
@@ -794,28 +805,34 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       SizedBox(width: 8),
                       Text('العناوين')
                     ]),
+                    // التعديل السادس: لو زائر يوجهه للتسجيل
                     onTap: () => Future.delayed(
                         Duration.zero,
                         () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => AddressesPage()))),
+                                builder: (context) => customerId.isEmpty
+                                    ? const LoginPage()
+                                    : AddressesPage()))),
                   ),
-                  PopupMenuItem(
-                    child: const Row(children: [
-                      Icon(Icons.logout, color: Colors.red),
-                      SizedBox(width: 8),
-                      Text('تسجيل خروج')
-                    ]),
-                    onTap: () => Future.delayed(Duration.zero, () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.clear();
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                          (route) => false);
-                    }),
-                  ),
+                  if (customerId.isNotEmpty)
+                    PopupMenuItem(
+                      child: const Row(children: [
+                        Icon(Icons.logout, color: Colors.red),
+                        SizedBox(width: 8),
+                        Text('تسجيل خروج')
+                      ]),
+                      onTap: () => Future.delayed(Duration.zero, () async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.clear();
+                        if (!context.mounted) return;
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                            (route) => false);
+                      }),
+                    ),
                 ],
               ),
             ],
@@ -1007,7 +1024,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                   width: 70,
                                                   decoration: BoxDecoration(
                                                     color: Colors.black
-                                                        .withValues(alpha: 0.5),
+                                                        .withOpacity(0.5),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             12),
