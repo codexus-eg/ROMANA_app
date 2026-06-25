@@ -94,17 +94,19 @@ class _SplashScreenState extends State<SplashScreen>
         if (!mounted) return;
         Navigator.pushAndRemoveUntil(
           context,
-          MaterialPageRoute(builder: (context) => LoginPage()),
+          MaterialPageRoute(builder: (context) => const LoginPage()),
           (route) => false,
         );
         return;
       }
     }
 
+    // هنا التعديل السحري الأول: الدخول كزائر مباشرة
     if (name.isEmpty) {
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(
+            builder: (context) => const HomePage(name: '', email: '')),
         (route) => false,
       );
       return;

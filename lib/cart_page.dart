@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'invoice_page.dart';
+import 'login_page.dart';
 
 class CartPage extends StatefulWidget {
   final List<Map<String, dynamic>> cart;
@@ -21,6 +22,7 @@ class _CartPageState extends State<CartPage> {
   String? selectedAddressId;
   String selectedAddressText = '';
   bool isLoadingAddresses = true;
+  bool isGuest = false;
 
   @override
   void initState() {
@@ -32,6 +34,16 @@ class _CartPageState extends State<CartPage> {
   Future<void> loadAddresses() async {
     final prefs = await SharedPreferences.getInstance();
     final customerId = prefs.getString('customerId') ?? '';
+
+    // التعديل السحري الثالث: التحقق إذا كان المستخدم زائر
+    if (customerId.isEmpty) {
+      setState(() {
+        isGuest = true;
+        isLoadingAddresses = false;
+      });
+      return;
+    }
+
     if (customerId.isNotEmpty) {
       final snapshot = await FirebaseFirestore.instance
           .collection('customers')
@@ -46,8 +58,6 @@ class _CartPageState extends State<CartPage> {
         }).toList();
         isLoadingAddresses = false;
       });
-    } else {
-      setState(() => isLoadingAddresses = false);
     }
   }
 
@@ -320,317 +330,383 @@ class _CartPageState extends State<CartPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        // اختيار العنوان
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red.shade200),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.location_on,
-                                      color: Colors.red, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('عنوان التوصيل',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              isLoadingAddresses
-                                  ? const Center(
-                                      child: CircularProgressIndicator(
-                                          color: Colors.red))
-                                  : addresses.isEmpty
-                                      ? Container(
-                                          padding: const EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                            color: Colors.orange.shade50,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: Colors.orange.shade200),
-                                          ),
-                                          child: const Row(
-                                            children: [
-                                              Icon(Icons.warning,
-                                                  color: Colors.orange),
-                                              SizedBox(width: 8),
-                                              Expanded(
-                                                child: Text(
-                                                  'لا يوجد عناوين! أضف عنوان من قائمة عناويني',
-                                                  style: TextStyle(
-                                                      color: Colors.orange),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        )
-                                      : Column(
-                                          children: addresses.map((address) {
-                                            final isSelected =
-                                                selectedAddressId ==
-                                                    address['id'];
-                                            return GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  selectedAddressId =
-                                                      address['id'];
-                                                  selectedAddressText =
-                                                      address['عنوان'] ?? '';
-                                                });
-                                              },
-                                              child: Container(
-                                                margin: const EdgeInsets.only(
-                                                    bottom: 8),
-                                                padding:
-                                                    const EdgeInsets.all(12),
-                                                decoration: BoxDecoration(
-                                                  color: isSelected
-                                                      ? Colors.red.shade50
-                                                      : Colors.grey.shade50,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                    color: isSelected
-                                                        ? Colors.red
-                                                        : Colors.grey.shade300,
-                                                    width: isSelected ? 2 : 1,
+                        // التعديل السحري الرابع: طلب الدخول من الزائر أو إظهار خيارات التوصيل
+                        if (isGuest) ...[
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Column(
+                              children: [
+                                const Icon(Icons.account_circle,
+                                    color: Colors.red, size: 40),
+                                const SizedBox(height: 8),
+                                const Text(
+                                  'يرجى تسجيل الدخول لإتمام طلبك واختيار عنوان التوصيل.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                const LoginPage()),
+                                      ).then((_) {
+                                        setState(() {
+                                          isLoadingAddresses = true;
+                                          isGuest = false;
+                                        });
+                                        loadAddresses();
+                                      });
+                                    },
+                                    child: const Text(
+                                        'تسجيل الدخول / إنشاء حساب',
+                                        style: TextStyle(
+                                            fontSize: 16, color: Colors.white)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ] else ...[
+                          // اختيار العنوان
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.location_on,
+                                        color: Colors.red, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('عنوان التوصيل',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                isLoadingAddresses
+                                    ? const Center(
+                                        child: CircularProgressIndicator(
+                                            color: Colors.red))
+                                    : addresses.isEmpty
+                                        ? Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color:
+                                                      Colors.orange.shade200),
+                                            ),
+                                            child: const Row(
+                                              children: [
+                                                Icon(Icons.warning,
+                                                    color: Colors.orange),
+                                                SizedBox(width: 8),
+                                                Expanded(
+                                                  child: Text(
+                                                    'لا يوجد عناوين! أضف عنوان من قائمة عناويني',
+                                                    style: TextStyle(
+                                                        color: Colors.orange),
                                                   ),
                                                 ),
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      isSelected
-                                                          ? Icons
-                                                              .radio_button_checked
-                                                          : Icons
-                                                              .radio_button_unchecked,
+                                              ],
+                                            ),
+                                          )
+                                        : Column(
+                                            children: addresses.map((address) {
+                                              final isSelected =
+                                                  selectedAddressId ==
+                                                      address['id'];
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    selectedAddressId =
+                                                        address['id'];
+                                                    selectedAddressText =
+                                                        address['عنوان'] ?? '';
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: const EdgeInsets.only(
+                                                      bottom: 8),
+                                                  padding:
+                                                      const EdgeInsets.all(12),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected
+                                                        ? Colors.red.shade50
+                                                        : Colors.grey.shade50,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    border: Border.all(
                                                       color: isSelected
                                                           ? Colors.red
-                                                          : Colors.grey,
+                                                          : Colors
+                                                              .grey.shade300,
+                                                      width: isSelected ? 2 : 1,
                                                     ),
-                                                    const SizedBox(width: 8),
-                                                    Expanded(
-                                                      child: Text(
-                                                        address['اسم'] ??
-                                                            'عنوان',
-                                                        style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color: isSelected
-                                                              ? Colors.red
-                                                              : Colors.black,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Icon(Icons.location_on,
+                                                  ),
+                                                  child: Row(
+                                                    children: [
+                                                      Icon(
+                                                        isSelected
+                                                            ? Icons
+                                                                .radio_button_checked
+                                                            : Icons
+                                                                .radio_button_unchecked,
                                                         color: isSelected
                                                             ? Colors.red
                                                             : Colors.grey,
-                                                        size: 16),
-                                                  ],
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      Expanded(
+                                                        child: Text(
+                                                          address['اسم'] ??
+                                                              'عنوان',
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: isSelected
+                                                                ? Colors.red
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Icon(Icons.location_on,
+                                                          color: isSelected
+                                                              ? Colors.red
+                                                              : Colors.grey,
+                                                          size: 16),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                            ],
+                                              );
+                                            }).toList(),
+                                          ),
+                              ],
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 12),
 
-                        // وقت التوصيل
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red.shade200),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Row(
-                                children: [
-                                  Icon(Icons.access_time,
-                                      color: Colors.red, size: 20),
-                                  SizedBox(width: 8),
-                                  Text('وقت التوصيل',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16)),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('من:',
-                                            style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 13)),
-                                        const SizedBox(height: 4),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red.shade50,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: Colors.red.shade200),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: selectedFromHour,
-                                              hint: const Text('اختار',
-                                                  style:
-                                                      TextStyle(fontSize: 13)),
-                                              isExpanded: true,
-                                              items: availableFrom
-                                                  .map((h) => DropdownMenuItem(
-                                                        value: h,
-                                                        child: Text(
-                                                          formatHour(h),
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 13),
-                                                        ),
-                                                      ))
-                                                  .toList(),
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  selectedFromHour = val;
-                                                  selectedToHour = null;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const Text('إلى:',
-                                            style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 13)),
-                                        const SizedBox(height: 4),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 8),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red.shade50,
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            border: Border.all(
-                                                color: Colors.red.shade200),
-                                          ),
-                                          child: DropdownButtonHideUnderline(
-                                            child: DropdownButton<int>(
-                                              value: selectedToHour,
-                                              hint: const Text('اختار',
-                                                  style:
-                                                      TextStyle(fontSize: 13)),
-                                              isExpanded: true,
-                                              items: availableTo
-                                                  .map((h) => DropdownMenuItem(
-                                                        value: h,
-                                                        child: Text(
-                                                          formatHour(h),
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 13),
-                                                        ),
-                                                      ))
-                                                  .toList(),
-                                              onChanged: (val) {
-                                                setState(() {
-                                                  selectedToHour = val;
-                                                });
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              if (isDeliverySelected)
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 8),
-                                  child: Text(
-                                    'التوصيل من $deliveryFromText إلى $deliveryToText 🕐',
-                                    style: const TextStyle(
-                                        color: Colors.green,
-                                        fontWeight: FontWeight.bold),
-                                  ),
+                          // وقت التوصيل
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.red.shade200),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Row(
+                                  children: [
+                                    Icon(Icons.access_time,
+                                        color: Colors.red, size: 20),
+                                    SizedBox(width: 8),
+                                    Text('وقت التوصيل',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                  ],
                                 ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  canOrder ? Colors.red : Colors.grey,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                            onPressed: canOrder
-                                ? () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => InvoicePage(
-                                          cartItems: cartItems,
-                                          total: total,
-                                          address: selectedAddressText,
-                                          deliveryFrom: deliveryFromText,
-                                          deliveryTo: deliveryToText,
-                                          addressName: addresses.firstWhere(
-                                                  (a) =>
-                                                      a['id'] ==
-                                                      selectedAddressId,
-                                                  orElse: () => {})['اسم'] ??
-                                              '',
-                                        ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text('من:',
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 13)),
+                                          const SizedBox(height: 4),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.red.shade200),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: selectedFromHour,
+                                                hint: const Text('اختار',
+                                                    style: TextStyle(
+                                                        fontSize: 13)),
+                                                isExpanded: true,
+                                                items: availableFrom
+                                                    .map(
+                                                        (h) => DropdownMenuItem(
+                                                              value: h,
+                                                              child: Text(
+                                                                formatHour(h),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            13),
+                                                              ),
+                                                            ))
+                                                    .toList(),
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    selectedFromHour = val;
+                                                    selectedToHour = null;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  }
-                                : null,
-                            child: Text(
-                              !isAddressSelected
-                                  ? 'اختار عنوان التوصيل أولاً'
-                                  : !isDeliverySelected
-                                      ? 'اختار وقت التوصيل أولاً'
-                                      : 'تأكيد الطلب',
-                              style: const TextStyle(
-                                  fontSize: 18, color: Colors.white),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Text('إلى:',
+                                              style: TextStyle(
+                                                  color: Colors.grey,
+                                                  fontSize: 13)),
+                                          const SizedBox(height: 4),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8),
+                                            decoration: BoxDecoration(
+                                              color: Colors.red.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              border: Border.all(
+                                                  color: Colors.red.shade200),
+                                            ),
+                                            child: DropdownButtonHideUnderline(
+                                              child: DropdownButton<int>(
+                                                value: selectedToHour,
+                                                hint: const Text('اختار',
+                                                    style: TextStyle(
+                                                        fontSize: 13)),
+                                                isExpanded: true,
+                                                items: availableTo
+                                                    .map(
+                                                        (h) => DropdownMenuItem(
+                                                              value: h,
+                                                              child: Text(
+                                                                formatHour(h),
+                                                                style:
+                                                                    const TextStyle(
+                                                                        fontSize:
+                                                                            13),
+                                                              ),
+                                                            ))
+                                                    .toList(),
+                                                onChanged: (val) {
+                                                  setState(() {
+                                                    selectedToHour = val;
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                if (isDeliverySelected)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Text(
+                                      'التوصيل من $deliveryFromText إلى $deliveryToText 🕐',
+                                      style: const TextStyle(
+                                          color: Colors.green,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
-                        ),
+                          const SizedBox(height: 12),
+
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    canOrder ? Colors.red : Colors.grey,
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12)),
+                              ),
+                              onPressed: canOrder
+                                  ? () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => InvoicePage(
+                                            cartItems: cartItems,
+                                            total: total,
+                                            address: selectedAddressText,
+                                            deliveryFrom: deliveryFromText,
+                                            deliveryTo: deliveryToText,
+                                            addressName: addresses.firstWhere(
+                                                    (a) =>
+                                                        a['id'] ==
+                                                        selectedAddressId,
+                                                    orElse: () => {})['اسم'] ??
+                                                '',
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  : null,
+                              child: Text(
+                                !isAddressSelected
+                                    ? 'اختار عنوان التوصيل أولاً'
+                                    : !isDeliverySelected
+                                        ? 'اختار وقت التوصيل أولاً'
+                                        : 'تأكيد الطلب',
+                                style: const TextStyle(
+                                    fontSize: 18, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),

@@ -8,7 +8,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:custom_refresh_indicator/custom_refresh_indicator.dart';
 import 'cart_page.dart';
-import 'myOrders.dart';
 import 'order_tracking_page.dart';
 import 'login_page.dart';
 import 'addresses_page.dart';

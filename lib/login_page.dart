@@ -148,6 +148,7 @@ class _LoginPageState extends State<LoginPage> {
         location.longitude <= 44.5;
   }
 
+  // تم التعديل هنا: تعريف المتغيرات وتصحيح رابط الخريطة ليفتح بشكل صحيح
   String getAddressFromLatLng(LatLng latLng) {
     final lat = latLng.latitude.toStringAsFixed(5);
     final lng = latLng.longitude.toStringAsFixed(5);
@@ -170,6 +171,8 @@ class _LoginPageState extends State<LoginPage> {
         });
         mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 15));
       } else {
+        // تم التعديل هنا لتفادي خطأ use_build_context_synchronously
+        if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('هذه الخدمة لا تتوفر في هذه المنطقة'),
@@ -178,6 +181,8 @@ class _LoginPageState extends State<LoginPage> {
         );
       }
     } catch (e) {
+      // تم التعديل هنا لتفادي خطأ use_build_context_synchronously
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('تعذر تحديد موقعك!'),
@@ -422,297 +427,314 @@ class _LoginPageState extends State<LoginPage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
-
-                // زرار المساعدة
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: IconButton(
-                    icon: const Icon(Icons.help_outline,
-                        color: Colors.red, size: 28),
-                    onPressed: _showHelpDialog,
-                    tooltip: 'مساعدة',
-                  ),
-                ),
-
-                const Icon(Icons.shopping_cart, size: 80, color: Colors.red),
-                const SizedBox(height: 10),
-                const Text('ROMANA',
-                    style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red)),
-                const Text('خضروات وفواكه طازجة',
-                    style: TextStyle(fontSize: 14, color: Colors.grey)),
-                const SizedBox(height: 24),
-
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _isLogin = true),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: _isLogin ? Colors.red : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
+                      Navigator.canPop(context)
+                          ? IconButton(
+                              icon: const Icon(Icons.arrow_forward_ios,
+                                  color: Colors.red, size: 24),
+                              onPressed: () => Navigator.pop(context),
+                            )
+                          : TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomePage(name: '', email: '')),
+                                );
+                              },
+                              child: const Text('تخطي كزائر',
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold)),
                             ),
-                            child: Text(
-                              'تسجيل دخول',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: _isLogin ? Colors.white : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => setState(() => _isLogin = false),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color:
-                                  !_isLogin ? Colors.red : Colors.transparent,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              'تسجيل جديد',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: !_isLogin ? Colors.white : Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
+                      IconButton(
+                        icon: const Icon(Icons.help_outline,
+                            color: Colors.red, size: 28),
+                        onPressed: _showHelpDialog,
+                        tooltip: 'مساعدة',
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 24),
-
-                if (!_isLogin) ...[
-                  TextFormField(
-                    controller: _nameController,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: 'الاسم',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: const Icon(Icons.person, color: Colors.red),
-                      filled: true,
-                      fillColor: Colors.red.shade50,
-                    ),
-                    validator: (v) =>
-                        !_isLogin && v!.isEmpty ? 'أدخل اسمك' : null,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: InputDecoration(
-                    labelText: 'رقم الجوال',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: const Icon(Icons.phone, color: Colors.red),
-                    filled: true,
-                    fillColor: Colors.red.shade50,
-                  ),
-                  validator: (v) => v!.length < 9 ? 'أدخل رقم جوال صحيح' : null,
-                ),
-                const SizedBox(height: 16),
-
-                if (!_isLogin) ...[
-                  TextFormField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    textInputAction: TextInputAction.next,
-                    decoration: InputDecoration(
-                      labelText: 'الإيميل',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      prefixIcon: const Icon(Icons.email, color: Colors.red),
-                      filled: true,
-                      fillColor: Colors.red.shade50,
-                    ),
-                    validator: (v) => !_isLogin && !v!.contains('@')
-                        ? 'أدخل إيميل صحيح'
-                        : null,
-                  ),
-                  const SizedBox(height: 16),
-                ],
-
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _submit(),
-                  decoration: InputDecoration(
-                    labelText: 'الباسورد',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
-                    prefixIcon: const Icon(Icons.lock, color: Colors.red),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
-                        color: Colors.red,
-                      ),
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
-                    ),
-                    filled: true,
-                    fillColor: Colors.red.shade50,
-                  ),
-                  validator: (v) => v!.length < 6
-                      ? 'الباسورد لازم يكون 6 أحرف على الأقل'
-                      : null,
-                ),
-                const SizedBox(height: 16),
-
-                if (!_isLogin) ...[
+                  const SizedBox(height: 20),
+                  const Icon(Icons.shopping_cart, size: 80, color: Colors.red),
+                  const SizedBox(height: 10),
+                  const Text('ROMANA',
+                      style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red)),
+                  const Text('خضروات وفواكه طازجة',
+                      style: TextStyle(fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 24),
                   Container(
                     decoration: BoxDecoration(
+                      color: Colors.red.shade50,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.red.shade200),
                     ),
-                    child: Column(
+                    child: Row(
                       children: [
-                        InkWell(
-                          onTap: getCurrentLocation,
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.red.shade50,
-                              borderRadius: const BorderRadius.only(
-                                topRight: Radius.circular(12),
-                                topLeft: Radius.circular(12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(() => _isLogin = true),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color:
+                                    _isLogin ? Colors.red : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.my_location, color: Colors.red),
-                                SizedBox(width: 8),
-                                Text('اختر موقعك الحالي',
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontWeight: FontWeight.bold)),
-                              ],
+                              child: Text(
+                                'تسجيل دخول',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: _isLogin ? Colors.white : Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                        ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            bottomRight: Radius.circular(12),
-                            bottomLeft: Radius.circular(12),
-                          ),
-                          child: SizedBox(
-                            height: 250,
-                            child: GoogleMap(
-                              initialCameraPosition: const CameraPosition(
-                                target: LatLng(18.2164, 42.5053),
-                                zoom: 10,
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => setState(() => _isLogin = false),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color:
+                                    !_isLogin ? Colors.red : Colors.transparent,
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              onMapCreated: (controller) {
-                                mapController = controller;
-                              },
-                              onTap: (latLng) {
-                                if (isInAseer(latLng)) {
-                                  final address = getAddressFromLatLng(latLng);
-                                  setState(() {
-                                    selectedLocation = latLng;
-                                    selectedAddress = address;
-                                  });
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'هذه الخدمة لا تتوفر في هذه المنطقة'),
-                                      backgroundColor: Colors.red,
-                                    ),
-                                  );
-                                }
-                              },
-                              markers: selectedLocation != null
-                                  ? {
-                                      Marker(
-                                        markerId: const MarkerId('selected'),
-                                        position: selectedLocation!,
-                                      )
-                                    }
-                                  : {},
-                              myLocationButtonEnabled: false,
-                              zoomControlsEnabled: false,
+                              child: Text(
+                                'تسجيل جديد',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: !_isLogin ? Colors.white : Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  if (selectedLocation != null)
-                    Container(
-                      margin: const EdgeInsets.only(top: 8),
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.green.shade200),
+                  const SizedBox(height: 24),
+                  if (!_isLogin) ...[
+                    TextFormField(
+                      controller: _nameController,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: 'الاسم',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        prefixIcon: const Icon(Icons.person, color: Colors.red),
+                        filled: true,
+                        fillColor: Colors.red.shade50,
                       ),
-                      child: const Row(
+                      validator: (v) =>
+                          !_isLogin && v!.isEmpty ? 'أدخل اسمك' : null,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  TextFormField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.phone,
+                    textInputAction: TextInputAction.next,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: 'رقم الجوال',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.phone, color: Colors.red),
+                      filled: true,
+                      fillColor: Colors.red.shade50,
+                    ),
+                    validator: (v) =>
+                        v!.length < 9 ? 'أدخل رقم جوال صحيح' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  if (!_isLogin) ...[
+                    TextFormField(
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        labelText: 'الإيميل',
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        prefixIcon: const Icon(Icons.email, color: Colors.red),
+                        filled: true,
+                        fillColor: Colors.red.shade50,
+                      ),
+                      validator: (v) => !_isLogin && !v!.contains('@')
+                          ? 'أدخل إيميل صحيح'
+                          : null,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  TextFormField(
+                    controller: _passwordController,
+                    obscureText: _obscurePassword,
+                    textInputAction: TextInputAction.done,
+                    onFieldSubmitted: (_) => _submit(),
+                    decoration: InputDecoration(
+                      labelText: 'الباسورد',
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      prefixIcon: const Icon(Icons.lock, color: Colors.red),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword),
+                      ),
+                      filled: true,
+                      fillColor: Colors.red.shade50,
+                    ),
+                    validator: (v) => v!.length < 6
+                        ? 'الباسورد لازم يكون 6 أحرف على الأقل'
+                        : null,
+                  ),
+                  const SizedBox(height: 16),
+                  if (!_isLogin) ...[
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.red.shade200),
+                      ),
+                      child: Column(
                         children: [
-                          Icon(Icons.check_circle,
-                              color: Colors.green, size: 20),
-                          SizedBox(width: 8),
-                          Text('تم تحديد الموقع ✅',
-                              style: TextStyle(
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold)),
+                          InkWell(
+                            onTap: getCurrentLocation,
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.red.shade50,
+                                borderRadius: const BorderRadius.only(
+                                  topRight: Radius.circular(12),
+                                  topLeft: Radius.circular(12),
+                                ),
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.my_location, color: Colors.red),
+                                  SizedBox(width: 8),
+                                  Text('اختر موقعك الحالي',
+                                      style: TextStyle(
+                                          color: Colors.red,
+                                          fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              bottomRight: Radius.circular(12),
+                              bottomLeft: Radius.circular(12),
+                            ),
+                            child: SizedBox(
+                              height: 250,
+                              child: GoogleMap(
+                                initialCameraPosition: const CameraPosition(
+                                  target: LatLng(18.2164, 42.5053),
+                                  zoom: 10,
+                                ),
+                                onMapCreated: (controller) {
+                                  mapController = controller;
+                                },
+                                onTap: (latLng) {
+                                  if (isInAseer(latLng)) {
+                                    final address =
+                                        getAddressFromLatLng(latLng);
+                                    setState(() {
+                                      selectedLocation = latLng;
+                                      selectedAddress = address;
+                                    });
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            'هذه الخدمة لا تتوفر في هذه المنطقة'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                },
+                                markers: selectedLocation != null
+                                    ? {
+                                        Marker(
+                                          markerId: const MarkerId('selected'),
+                                          position: selectedLocation!,
+                                        )
+                                      }
+                                    : {},
+                                myLocationButtonEnabled: false,
+                                zoomControlsEnabled: false,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                ],
-
-                const SizedBox(height: 24),
-
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                    if (selectedLocation != null)
+                      Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.green.shade200),
+                        ),
+                        child: const Row(
+                          children: [
+                            Icon(Icons.check_circle,
+                                color: Colors.green, size: 20),
+                            SizedBox(width: 8),
+                            Text('تم تحديد الموقع ✅',
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                  ],
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      onPressed: _isLoading ? null : _submit,
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(_isLogin ? 'دخول' : 'إرسال كود التحقق',
+                              style: const TextStyle(
+                                  fontSize: 18, color: Colors.white)),
                     ),
-                    onPressed: _isLoading ? null : _submit,
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : Text(_isLogin ? 'دخول' : 'إرسال كود التحقق',
-                            style: const TextStyle(
-                                fontSize: 18, color: Colors.white)),
                   ),
-                ),
-                const SizedBox(height: 40),
-              ],
+                  const SizedBox(height: 40),
+                ],
+              ),
             ),
           ),
         ),
